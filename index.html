@@ -1,105 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>IDFC Digital Loan Prototype</title>
+  <title>IDFC Mortgage Prototype</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<header>
-  <h1>IDFC First Bank</h1>
-  <h2>Digital Mortgage Loans – Instant Property Valuation</h2>
-  <nav>
-    <button onclick="showSection('flow')">Loan Application</button>
-    <button onclick="showSection('valuation')">Property Valuation</button>
-    <button onclick="showSection('bankdash')">Bank Benefit Dashboard</button>
-  </nav>
-</header>
-
-<section id="flow" class="active">
-  <h3>Step-by-Step Loan Wizard</h3>
-  <form id="loanForm">
-    <label for="mobile">Mobile/Aadhaar *</label>
-    <input type="text" id="mobile" required autocomplete="off" maxlength="12" />
-    <label for="gstin">GSTIN (if available)
-      <span class="tooltip" title="Why we need this? Used for automated digital risk scoring.">(?)</span>
-    </label>
-    <input type="text" id="gstin" autocomplete="off" maxlength="15" />
-    <button type="button" id="fetchProfile">Prefill Profile</button>
-    <p id="welcomeMsg"></p>
-    <label for="localLang">Language</label>
-    <select id="localLang">
-      <option value="en">English</option>
-      <option value="hi">हिंदी</option>
-    </select>
-    <label for="propertyPin">Property Pin/Location *</label>
-    <input type="text" id="propertyPin" required autocomplete="off" maxlength="8" />
-    <button type="button" id="nextStep">Proceed</button>
-    <div id="consentBlock">
-      <input type="checkbox" id="consentCheck" required />
-      <label for="consentCheck">
-        I consent to share PAN/Aadhaar data for digital loan eligibility check
+  <header class="idfc-header">
+    <h1>IDFC FIRST Mortgage Solutions</h1>
+    <nav>
+      <button onclick="switchRole('consumer')">Consumer</button>
+      <button onclick="switchRole('officer')">Loan Officer</button>
+      <button onclick="switchRole('connector')">Field Connector</button>
+    </nav>
+  </header>
+  
+  <!-- Persona onboarding with context -->
+  <section id="consumer-view" class="active">
+    <h2>Apply for Loan (Instant Valuation)</h2>
+    <form id="consumer-form">
+      <label>Mobile/Aadhaar <input id="input-mobile" type="text" maxlength="12" required /></label>
+      <label>Name <input id="input-name" type="text" required /></label>
+      <label>Property Address/Pin <input id="input-address" type="text" required /></label>
+      <label>Type 
+        <select id="input-type">
+          <option>Apartment</option><option>Plot</option><option>Land</option>
+        </select>
       </label>
-    </div>
-  </form>
-</section>
+      <label>Circle Rate <input id="input-circle" type="number" required /></label>
+      <label>Registry Data <input id="input-registry" type="text" placeholder="Upload or paste registry details" /></label>
+      <label>Photo Upload <input id="input-photo" type="file" accept="image/*" /></label>
+      <label>Account Aggregator (AA) consent <input type="checkbox" id="input-consent" required /> I consent to sharing
+        <span class="tooltip">Why required? For instant credit scoring and regulatory compliance</span>
+      </label>
+      <button type="button" onclick="triggerValuation()">Instant Ballpark Valuation</button>
+    </form>
+    <div id="valuation-result"></div>
+    <div id="rate-result"></div>
+    <div id="rejection-flow"></div>
+  </section>
 
-<section id="valuation" class="hidden">
-  <h3>Automated Valuation – Geo-Verified</h3>
-  <form id="valuationForm">
-    <label for="propertyType">Property Type</label>
-    <select id="propertyType">
-      <option>Residential</option>
-      <option>Commercial</option>
-      <option>Agricultural</option>
-    </select>
-    <label for="propertySize">Size (sq.ft)</label>
-    <input type="number" id="propertySize" value="1200" min="100" />
-    <label for="location">Location/City</label>
-    <select id="location">
-      <option>Pune-Baner</option>
-      <option>Indore-Vijay Nagar</option>
-      <option>Nashik-College Road</option>
-    </select>
-    <button type="button" id="calculateValueBtn">Calculate Estimate</button>
-    <p id="valuationDisplay"></p>
-    <p><span class="badge">Geo-verified, RBI Compliant</span></p>
-  </form>
-</section>
+  <!-- Loan officer dashboard: applications, KPIs, and risk scores -->
+  <section id="officer-view" class="hidden">
+    <h2>Loan Officer Dashboard</h2>
+    <div id="dashboard-summary">
+      <div class="stat-card">Applications: <span id="app-count"></span></div>
+      <div class="stat-card">Avg. TAT: <span id="tat-avg"></span> hrs</div>
+      <div class="stat-card">GNPA Impact <span id="gnpa-score"></span></div>
+      <div class="stat-card">New-to-bank: <span id="ntb-count"></span></div>
+    </div>
+    <table id="app-table">
+      <thead>
+        <tr>
+          <th>Name</th><th>Type</th><th>Circle Rate</th><th>Registry</th><th>Consent</th><th>Status</th><th>Due Diligence</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
 
-<section id="bankdash" class="hidden">
-  <h3>Bank ROI Dashboard</h3>
-  <div id="roiCards">
-    <div class="card">
-      <h4>New Loans (annual)</h4>
-      <p>22,000 <span class="stat">(+18%)</span></p>
-    </div>
-    <div class="card">
-      <h4>GNPA Drop</h4>
-      <p>↓ 25 bp</p>
-    </div>
-    <div class="card">
-      <h4>Avg Time Saved</h4>
-      <p>10 days → 2 mins</p>
-    </div>
-    <div class="card">
-      <h4>Unbanked Served</h4>
-      <p>51% now eligible</p>
-    </div>
-  </div>
-  <div id="impactNote">
-    <p>
-      <span class="icon">🏆</span>
-      <span>Instant AVM and alternative data unlock ₹1,100 Cr lending/year</span>
-    </p>
-    <p>
-      <span class="icon">🔒</span>
-      <span>Compliance: Direct bank payout, digital agreement/OTP, full consent</span>
-    </p>
-  </div>
-</section>
+  <!-- Connector tab for geo-tag and compliance -->
+  <section id="connector-view" class="hidden">
+    <h2>Field Verification/Connector</h2>
+    <form id="connector-form">
+      <label>Geo-tag Property <input id="connector-geo" type="text" placeholder="GPS Location (auto-capture/simulated)" /></label>
+      <label>Upload Photo <input id="connector-photo" type="file" accept="image/*" /></label>
+      <label>Boundary/Legal Documents <input id="connector-doc" type="file" /></label>
+      <button type="button" onclick="submitConnectorData()">Submit for Verification</button>
+    </form>
+    <div id="connector-status"></div>
+  </section>
 
-<script src="app.js"></script>
+  <!-- Generic modal for dynamic feedback, retention funnel -->
+  <div id="modal" class="modal hidden"></div>
+
+  <footer>
+    <div class="bank-badge">
+      Digital lending demo – RBI guidelines enforced. Consent tracked. Geo-tag registry integration.
+    </div>
+  </footer>
+  <script src="app.js"></script>
 </body>
 </html>
