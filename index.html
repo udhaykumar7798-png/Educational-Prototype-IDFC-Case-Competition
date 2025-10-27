@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IDFC Digital Loan Prototype</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header>
+  <h1>IDFC First Bank</h1>
+  <h2>Digital Mortgage Loans – Instant Property Valuation</h2>
+  <nav>
+    <button onclick="showSection('flow')">Loan Application</button>
+    <button onclick="showSection('valuation')">Property Valuation</button>
+    <button onclick="showSection('bankdash')">Bank Benefit Dashboard</button>
+  </nav>
+</header>
+
+<section id="flow" class="active">
+  <h3>Step-by-Step Loan Wizard</h3>
+  <form id="loanForm">
+    <label for="mobile">Mobile/Aadhaar *</label>
+    <input type="text" id="mobile" required autocomplete="off" maxlength="12" />
+    <label for="gstin">GSTIN (if available)
+      <span class="tooltip" title="Why we need this? Used for automated digital risk scoring.">(?)</span>
+    </label>
+    <input type="text" id="gstin" autocomplete="off" maxlength="15" />
+    <button type="button" id="fetchProfile">Prefill Profile</button>
+    <p id="welcomeMsg"></p>
+    <label for="localLang">Language</label>
+    <select id="localLang">
+      <option value="en">English</option>
+      <option value="hi">हिंदी</option>
+    </select>
+    <label for="propertyPin">Property Pin/Location *</label>
+    <input type="text" id="propertyPin" required autocomplete="off" maxlength="8" />
+    <button type="button" id="nextStep">Proceed</button>
+    <div id="consentBlock">
+      <input type="checkbox" id="consentCheck" required />
+      <label for="consentCheck">
+        I consent to share PAN/Aadhaar data for digital loan eligibility check
+      </label>
+    </div>
+  </form>
+</section>
+
+<section id="valuation" class="hidden">
+  <h3>Automated Valuation – Geo-Verified</h3>
+  <form id="valuationForm">
+    <label for="propertyType">Property Type</label>
+    <select id="propertyType">
+      <option>Residential</option>
+      <option>Commercial</option>
+      <option>Agricultural</option>
+    </select>
+    <label for="propertySize">Size (sq.ft)</label>
+    <input type="number" id="propertySize" value="1200" min="100" />
+    <label for="location">Location/City</label>
+    <select id="location">
+      <option>Pune-Baner</option>
+      <option>Indore-Vijay Nagar</option>
+      <option>Nashik-College Road</option>
+    </select>
+    <button type="button" id="calculateValueBtn">Calculate Estimate</button>
+    <p id="valuationDisplay"></p>
+    <p><span class="badge">Geo-verified, RBI Compliant</span></p>
+  </form>
+</section>
+
+<section id="bankdash" class="hidden">
+  <h3>Bank ROI Dashboard</h3>
+  <div id="roiCards">
+    <div class="card">
+      <h4>New Loans (annual)</h4>
+      <p>22,000 <span class="stat">(+18%)</span></p>
+    </div>
+    <div class="card">
+      <h4>GNPA Drop</h4>
+      <p>↓ 25 bp</p>
+    </div>
+    <div class="card">
+      <h4>Avg Time Saved</h4>
+      <p>10 days → 2 mins</p>
+    </div>
+    <div class="card">
+      <h4>Unbanked Served</h4>
+      <p>51% now eligible</p>
+    </div>
+  </div>
+  <div id="impactNote">
+    <p>
+      <span class="icon">🏆</span>
+      <span>Instant AVM and alternative data unlock ₹1,100 Cr lending/year</span>
+    </p>
+    <p>
+      <span class="icon">🔒</span>
+      <span>Compliance: Direct bank payout, digital agreement/OTP, full consent</span>
+    </p>
+  </div>
+</section>
+
+<script src="app.js"></script>
+</body>
+</html>
